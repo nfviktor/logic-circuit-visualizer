@@ -9,7 +9,6 @@ body{
 	position: fixed;
 	height: 200px;
 	width: 200px;
-	border: red 1px solid;
 	z-index: 1000;
 }
 table{
