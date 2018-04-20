@@ -1,12 +1,11 @@
 $(function(){
 
-	
-
 	var scene = new THREE.Scene();
 	var camera = new THREE.PerspectiveCamera(30,window.innerWidth/window.innerHeight, 1, 1000);
 	var renderer = new THREE.WebGLRenderer({antialias: true});
 	var controls = new THREE.OrbitControls( camera );
 	controls.maxPolarAngle = Math.PI / 2;
+	
 
 	renderer.setClearColor( 0x00BFFF );
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -17,52 +16,46 @@ $(function(){
 	var raycaster = new THREE.Raycaster();
 	var objects = [];
 	var mouse = new THREE.Vector2();
+	var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
 
 	init();
 	animate();
 
 // Initialize
-	function init(){
-	renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+function init(){
 	window.addEventListener( 'resize', onWindowResize, false );
 	
-	//LIGHTS
-	/*
-	var light = new THREE.HemisphereLight( 0x00BFFF, 0xeeeeee, 0.75 );
+//LIGHTS
+	var light = new THREE.HemisphereLight( 0xFFFFFF, 0xDDDDDD, 0.40 );
   	light.position.set( 0.5, 1, 0.75 );
-  	scene.add( light );*/
+  	scene.add( light );
 	
 	var lightAmbient = new THREE.AmbientLight( 0xAAAAAA ); // soft white light
 	scene.add( lightAmbient );
 	
-	var directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
-	//spotLight.castShadow = true;
-	directionalLight.position.set(1,1,1);
-	scene.add(directionalLight);
+	var spotLight = new THREE.SpotLight(0xFFFFFF, 2);
+	spotLight.castShadow = true;
+	spotLight.position.set(0,15,0);
+	spotLight.shadow.mapSize.width = 2048;
+	spotLight.shadow.mapSize.height = 2048;
+	spotLight.shadow.camera.far = 3500;
+	spotLight.shadow.bias = -0.0001;
+	scene.add(spotLight);
 
-	//HELPERS
+//HELPERS
 	var axis = new THREE.AxesHelper(5);
-	axis.position.y = -3;
-	scene.add(axis);
-
-	var grid = new THREE.GridHelper(100, 20 , "rgb(255,0,0)");
-	grid.position.y = -3;
-	scene.add(grid);
+	axis.position.y = -2.8;
 	
-	//Camera
-	camera.position.set( 80, 80, 80 );
+	var grid = new THREE.GridHelper(100, 20 , "rgb(255,0,0)");
+	grid.position.y = -2.9;
+
+//Camera
+	camera.position.set( 40, 40, 40 );
 	camera.lookAt(scene.position);
+	controls.enablePan = false;
 	controls.update();
 
-	//teszt drag controls
-	/*
-	var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
-	dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
-	dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
-	*/
-
-	//Plane geometry
+//Plane geometry
 	var planeGeometry = new THREE.PlaneGeometry(1000,1000,1000);
 	var planeMaterial = new THREE.MeshLambertMaterial({color:0x693109});
 	var plane = new THREE.Mesh(planeGeometry,planeMaterial);
@@ -71,63 +64,86 @@ $(function(){
 	plane.receiveShadow = true;
 	scene.add(plane);
 
-	//-import rész
+//-import rész
 	var loader = new THREE.JSONLoader();
 	// zarojelbe 1. az eleresi ut, a 2. a callback function!
 	//loader.load('./model/Wood2.json', addModel);
-
 	function addModel(geometry, materials){
 		var object = new THREE.Mesh(geometry, materials);
-		object.scale.set( 3, 3, 3);
-		//Math.floor((Math.random() * 10) + 1); - return random number between 1-10;
-		object.position.set(1,1,1);
-		object.rotation.set(0.5*Math.PI , Math.PI / 2, Math.PI / 2);
-		scene.add(object);
+		object.scale.set( 2.5, 2.5, 2.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
+		object.castShadow = true;
 		objects.push(object);
+		scene.add(object);
 	}
 
-	//-Gombok Eventje
-	document.getElementById("add_negator").onclick = function() {
-		loader.load('./model/Negator.json', addModel); 
-	};
+//Sidebar with button functions
+	document.getElementById ("open").addEventListener ("click", openNav, false);
+	document.getElementById ("close").addEventListener ("click", closeNav, false);
+		
+	function openNav() {
+		
+    	document.getElementById("mySidenav").style.width = "250px";
+    	document.getElementById("open").style.display = "none";
+    	controls.enabled = false;
+    	dragControls.activate();
+    	camera.position.set( 0, 70, 0 );
+    	camera.rotation.y = (-90 * Math.PI) / 180;
+    	scene.add(axis);
+		scene.add(grid);
+		camera.lookAt(scene.position);
+	//Eger eventjei
+		
+    //Sidebar Gombok Eventje
+		document.getElementById("add_negator").onclick = function() {
+			loader.load('./model/Negator.json', addModel);
+		};
 
-	document.getElementById("add_andgate").onclick = function() {
-		loader.load('./model/TwoInput.json', addModel); 
-	};
-
-	document.getElementById("add_nandgate").onclick = function() {
-		loader.load('./model/TwoInputNegate.json', addModel); 
-	};
-
-	document.getElementById("add_orgate").onclick = function() {
-		loader.load('./model/TwoInput.json', addModel); 
-	};	
-
-	document.getElementById("add_norgate").onclick = function() {
-		loader.load('./model/TwoInputNegate.json', addModel); 
-	};
-
-	document.getElementById("add_xorgate").onclick = function() {
-		loader.load('./model/TwoInput.json', addModel); 
-	};
+		document.getElementById("add_andgate").onclick = function() {
+			loader.load('./model/TwoInput.json', addModel); 
+		};
 	
-	document.getElementById("remove").onclick = function() {
+		document.getElementById("add_nandgate").onclick = function() {
+			loader.load('./model/TwoInputNegate.json', addModel); 
+		};
 
-	};
+		document.getElementById("add_orgate").onclick = function() {
+			loader.load('./model/TwoInput.json', addModel); 
+		};	
 
-	document.getElementById("edit").onclick = function() {
+		document.getElementById("add_norgate").onclick = function() {
+			loader.load('./model/TwoInputNegate.json', addModel); 
+		};
 
-	};
+		document.getElementById("add_xorgate").onclick = function() {
+			loader.load('./model/TwoInput.json', addModel); 
+		};
 	
+		document.getElementById("remove").onclick = function() {
+	
+		};
+
+		document.getElementById("edit").onclick = function() {
+	
+		};
+	
+	}
+
+	/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+	function closeNav() {
+	    document.getElementById("mySidenav").style.width = "0";
+	    document.getElementById("open").style.display = "block";
+	    scene.remove(axis);
+		scene.remove(grid);
+	    camera.position.set( 40, 40, -40 );
+	   	dragControls.deactivate();
+	   	controls.enabled = true;
+	}
 }
 
-//Mouse Events
-function onDocumentMouseMove( event ) {
-				event.preventDefault();
-				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-			}
 
+//Mouse Events
 function onDocumentMouseDown( event ) {
 				event.preventDefault();
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -135,9 +151,9 @@ function onDocumentMouseDown( event ) {
 				raycaster.setFromCamera( mouse, camera );
 				var intersects = raycaster.intersectObjects( objects );
 				if ( intersects.length > 0 ) {
-					console.log("THERE!!!");
+					console.log("There is it! Raycaster sees object");
+					console.log(intersects[0]);
 				}
-				console.log(mouse);
 			}	
 
 function onWindowResize() {
@@ -158,15 +174,8 @@ function update(){
 }
 
 function render() {
-		// find intersections
-		raycaster.setFromCamera( mouse, camera );
-		var intersects = raycaster.intersectObjects( objects );
-		if ( intersects.length > 0 ) {
-			console.log("there");
-		}
 		renderer.render( scene, camera );
 }
-	
 
 $("#webGL-container").append(renderer.domElement);
 renderer.render(scene,camera);

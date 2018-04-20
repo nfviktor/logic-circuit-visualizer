@@ -3,7 +3,6 @@
 <html>
 	<head>
 		<meta charset=utf-8>
-
 		<title>Combo</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" type="text/css" href="style.css">
@@ -12,28 +11,27 @@
 		<script src="js/three.js"></script>
 		<script src="js/MyScript.js"></script>
 		<script type="text/javascript" src="js/OrbitControls.js"></script>
+		<script type="text/javascript" src="js/DragControls.js"></script>
 	</head>
 
 	<body>
-		<div id="webGL-container">
-			<div id=menu>
-				<table>
-					<tr><td><button id="add_negator"> Add Negator </button></td></tr>
-					<tr><td><button id="add_andgate"> Add Andgate</button></td></tr>
-					<tr><td><button id="add_nandgate"> Add Nandgate</button></td></tr>
-					<tr><td><button id="add_orgate"> Add Orgate</button></td></tr>
-					<tr><td><button id="add_norgate"> Add Norgate</button></td></tr>
-					<tr><td><button id="add_xorgate"> Add Xorgate</button></td></tr>
-					<tr><td><button id="remove"> Remove </button></td></tr>
-					<tr><td><button id="edit"> Edit </button></td></tr>
-				</table>
+		<div id="mySidenav" class="sidenav">
+  			<a href="javascript:void(0)" class="closebtn" id="close">&times;</a>
+  			<a href="javascript:void(0)" id="add_negator">Negator</p>
+  			<a href="javascript:void(0)" id="add_andgate">And Gate</p>
+  			<a href="javascript:void(0)" id="add_nandgate">Nand Gate</p>
+  			<a href="javascript:void(0)" id="add_orgate">Or Gate</p>
+  			<a href="javascript:void(0)" id="add_norgate">Nor Gate</p>
+  			<a href="javascript:void(0)" id="add_xorgate">Xor Gate</p>
+  			<a href="javascript:void(0)" id="remove">Remove</p>
+  			<a href="javascript:void(0)" id="edit">Edit</p>
+		</div>
+		<span id="open">open</span>
+
+		<div id="main">
+			<div id="webGL-container">
 			</div>
 		</div>
-		
-
-		
-
-
 	</body>
 </html>
 
