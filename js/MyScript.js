@@ -16,7 +16,7 @@ $(function(){
 	var raycaster = new THREE.Raycaster();
 	var objects = [];
 	var mouse = new THREE.Vector2();
-	var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+	var dragControls;
 
 	init();
 	animate();
@@ -66,24 +66,33 @@ function init(){
 
 //-import rész
 	var loader = new THREE.JSONLoader();
+	var i = 0;
 	// zarojelbe 1. az eleresi ut, a 2. a callback function!
 	//loader.load('./model/Wood2.json', addModel);
 	function addModel(geometry, materials){
+		i++;
 		var object = new THREE.Mesh(geometry, materials);
 		object.scale.set( 2.5, 2.5, 2.5);
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
 		object.castShadow = true;
+		object.name = i;
 		objects.push(object);
 		scene.add(object);
 	}
 
+
+
 //Sidebar with button functions
 	document.getElementById ("open").addEventListener ("click", openNav, false);
+	document.getElementById ("remove").addEventListener ("click", removeObject,false);
+	document.getElementById ("edit").addEventListener ("click", connectObjects,false);
+	document.getElementById ("back01").addEventListener ("click", goBack, false);
+	document.getElementById ("back02").addEventListener ("click", goBack, false);
 	document.getElementById ("close").addEventListener ("click", closeNav, false);
 		
 	function openNav() {
-		
+		dragControls = new THREE.DragControls( objects, camera, renderer.domElement);
     	document.getElementById("mySidenav").style.width = "250px";
     	document.getElementById("open").style.display = "none";
     	controls.enabled = false;
@@ -119,40 +128,50 @@ function init(){
 		document.getElementById("add_xorgate").onclick = function() {
 			loader.load('./model/TwoInput.json', addModel); 
 		};
-	
-		document.getElementById("remove").onclick = function() {
-	
-		};
+	}
 
-		document.getElementById("edit").onclick = function() {
-	
-		};
-	
+	function removeObject(){
+		document.getElementById("mySidenav").style.width = "0";
+		document.getElementById("removeObject").style.width = "250px";
+		dragControls.dispose();
+		document.addEventListener( 'mousedown', onDocumentMouseDown1, false );
+	}
+
+	function connectObject(){
+
+	}
+
+	function goBack(){
+		document.removeEventListener( 'mousedown', onDocumentMouseDown1, false );
+		document.getElementById("removeObject").style.width = "0";
+		document.getElementById("connectObjects").style.width = "0";
+		openNav();
 	}
 
 	/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
 	function closeNav() {
+		document.removeEventListener( 'mousedown', onDocumentMouseDown1, false );
+		dragControls.dispose();
+	   	controls.enabled = true;
 	    document.getElementById("mySidenav").style.width = "0";
 	    document.getElementById("open").style.display = "block";
 	    scene.remove(axis);
 		scene.remove(grid);
 	    camera.position.set( 40, 40, -40 );
-	   	dragControls.deactivate();
-	   	controls.enabled = true;
 	}
 }
 
-
 //Mouse Events
-function onDocumentMouseDown( event ) {
+function onDocumentMouseDown1( event ) {
 				event.preventDefault();
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 				raycaster.setFromCamera( mouse, camera );
 				var intersects = raycaster.intersectObjects( objects );
 				if ( intersects.length > 0 ) {
-					console.log("There is it! Raycaster sees object");
-					console.log(intersects[0]);
+					var x = intersects[0].object.name;
+					scene.remove(intersects[0].object);
+					objects = objects.filter(function(el) { return el.name !== x;});
 				}
 			}	
 
