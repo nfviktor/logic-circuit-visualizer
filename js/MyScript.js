@@ -84,12 +84,12 @@ function init(){
 
 
 //Sidebar with button functions
-	document.getElementById ("open").addEventListener ("click", openNav, false);
-	document.getElementById ("remove").addEventListener ("click", removeObject,false);
-	document.getElementById ("edit").addEventListener ("click", connectObjects,false);
-	document.getElementById ("back01").addEventListener ("click", goBack, false);
-	document.getElementById ("back02").addEventListener ("click", goBack, false);
-	document.getElementById ("close").addEventListener ("click", closeNav, false);
+	document.getElementById("open").addEventListener ("click", openNav, false);
+	document.getElementById("removeMenu").addEventListener ("click", removeObject, false);
+	document.getElementById("connectMenu").addEventListener ("click", connectObjects, false);
+	document.getElementById("back01").addEventListener ("click", goBack, false);
+	document.getElementById("back02").addEventListener ("click", goBack, false);
+	document.getElementById("close").addEventListener ("click", closeNav, false);
 		
 	function openNav() {
 		dragControls = new THREE.DragControls( objects, camera, renderer.domElement);
@@ -137,8 +137,11 @@ function init(){
 		document.addEventListener( 'mousedown', onDocumentMouseDown1, false );
 	}
 
-	function connectObject(){
-
+	function connectObjects(){
+		document.getElementById("mySidenav").style.width = "0";
+		document.getElementById("connectObjects").style.width = "250px";
+		dragControls.dispose();
+		document.getElementById("connectButton").addEventListener ("click",  , false);
 	}
 
 	function goBack(){
@@ -173,7 +176,18 @@ function onDocumentMouseDown1( event ) {
 					scene.remove(intersects[0].object);
 					objects = objects.filter(function(el) { return el.name !== x;});
 				}
-			}	
+			}
+
+function onDocumentMouseDown2( event ) {
+				event.preventDefault();
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				raycaster.setFromCamera( mouse, camera );
+				var intersects = raycaster.intersectObjects( objects );
+				if ( intersects.length > 0 ) {
+					return intersects[0].object;
+				}
+			}
 
 function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
