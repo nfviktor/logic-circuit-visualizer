@@ -124,6 +124,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 		var intersects = _raycaster.intersectObjects( _objects );
 
 		if ( intersects.length > 0 ) {
+
 			console.log("DragControls:",_objects);
 			_selected = intersects[ 0 ].object;
 
