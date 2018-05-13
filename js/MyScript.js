@@ -16,6 +16,7 @@ $(function(){
 	var objects = [];
 	var selectedObjects = [];
 	var connectingLines = [];
+	var log = document.getElementById("log");
 
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
@@ -46,10 +47,10 @@ function init(){
 	scene.add(spotLight);
 
 	//HELPERS
-	var axis = new THREE.AxesHelper(5);
+	var axis = new THREE.AxesHelper(10);
 	axis.position.y = -2.8;
 	
-	var grid = new THREE.GridHelper(100, 20 , "rgb(255,0,0)");
+	var grid = new THREE.GridHelper(100, 50 , "rgb(255,0,0)");
 	grid.position.y = -2.9;
 
 	//Camera
@@ -60,7 +61,7 @@ function init(){
 
 	//Plane geometry
 	var planeGeometry = new THREE.PlaneGeometry(1000,1000,1000);
-	var planeMaterial = new THREE.MeshLambertMaterial({color:0x693109});
+	var planeMaterial = new THREE.MeshLambertMaterial({color:0xFFFFFF});
 	var plane = new THREE.Mesh(planeGeometry,planeMaterial);
 	plane.position.y = -3;
 	plane.rotation.x = -0.5*Math.PI;
@@ -224,6 +225,7 @@ function init(){
 		document.getElementById("connectObjects").style.width = "0";
 	    document.getElementById("mySidenav").style.width = "0";
 	    document.getElementById("open").style.display = "block";
+	    $('#log').empty();
 	    scene.remove(axis);
 		scene.remove(grid);
 	    camera.position.set( 40, 40, -40 );
@@ -243,28 +245,26 @@ function onDocumentMouseDown1( event ) {
 				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 				raycaster.setFromCamera( mouse, camera );
 				var intersects = raycaster.intersectObjects( objects );
-				if ( intersects.length > 0 ) {
-					var x = intersects[0].object.name;
-					console.log(connectingLines);
-					console.log(connectingLines.length);
+				if ( intersects.length > 0 ){
+					x = intersects[0].object;
 					for(var i = 0; i < connectingLines.length; i=i+3){
-						if(x == connectingLines[i].name){
-							console.log(connectingLines[i+2].name);
-							var z = scene.getObjectByName(connectingLines[i+2].name);
-							scene.remove(z)
-							connectingLines.splice(i, 3);
-							i = 0;
+						if(connectingLines[i] !== undefined){
+							if(x == connectingLines[i]){
+								var z = scene.getObjectByName(connectingLines[i+2].name);
+								console.log(connectingLines[i+2].name);
+								connectingLines.splice(i, 3);
+								scene.remove(z);
+								i = -3;
+							}
+							if(x == connectingLines[i+1]){
+								var z = scene.getObjectByName(connectingLines[i+2].name);
+								console.log(connectingLines[i+2].name);
+								connectingLines.splice(i, 3);
+								scene.remove(z);
+								i = -3;
+							}
 						}
-						if(connectingLines[i+1].name !== undefined && x == connectingLines[i+1].name){
-							var z = scene.getObjectByName(connectingLines[i+2].name);
-							console.log(connectingLines[i+2].name);
-							connectingLines.splice(i, 3);
-							scene.remove(z);
-							i = 0;
-						}
-						console.log(connectingLines);
 					}
-
 					scene.remove(intersects[0].object);
 					objects = objects.filter(function(el) { return el.name !== x;});
 				}
@@ -302,17 +302,11 @@ function onObjectMove(){
 
 	}else{
 		for(var i = 0; i < connectingLines.length; i=i+3){
-			//console.log(i);
-			//console.log(connectingLines.length);
-			//console.log(connectingLines);
-			//console.log(connectingLines[i+2].geometry.vertices);
-			//console.log("Line1.",connectingLines[i+2].geometry.vertices[i]);
-			//console.log("Line2",connectingLines[i+2].geometry.vertices[i+1]);
-			//console.log("Position of First",connectingLines[i].position);
-			//console.log("Position of First",connectingLines[i+1].position);
-
 			connectingLines[i+2].geometry.vertices[0] = connectingLines[i].position;
-			connectingLines[i+2].geometry.vertices[1] = connectingLines[i+1].position;
+
+			connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
+			connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);
+			connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
 			connectingLines[i+2].geometry.verticesNeedUpdate = true;
 		}
 	}

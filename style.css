@@ -5,8 +5,19 @@ body{
 #webGL-container{
 	z-index: 1;
 }
+#log{
+	margin: 0 33% 0 33%;
+	padding: auto;
+	text-align: center;
+	color: red;
+	position: fixed;
+	width: 33%;
+	height: 30px;
+	background-color: black;
+}
 #open{
 	margin: auto;
+	padding: 10px 20px 10px 20px;
 	text-align: center;
 	color: white;
 	display: block;
