@@ -10,3 +10,6 @@ You can use any
 - Copy the cloned or downloaded, and unzipped folder into "../wamp/www" folder or "../wamp64/www" folder
 - Open localhost in browser and choose the project folder
 
+## Still in progress
+
+Every input on every object is set to 0. If you connect it will change to the connected object's output value.
