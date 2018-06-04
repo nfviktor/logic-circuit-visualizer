@@ -94,11 +94,97 @@ function init(){
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
 		object.castShadow = true;
-		object.name = "Andgate" + o;
+		object.name = "AndGate" + o;
+
 		object.userData.connectedOnce = false;
-		object.userData.input1 = 0;
-		object.userData.input2 = 0;
-		object.userData.output = function(){if(object.userData.input1 == 1 && object.userData.input2 == 1) return 1; else return 0;};
+
+		object.userData.leftPin = [];
+		object.userData.leftPin.setposition = function(){ 
+			object.userData.leftPin.position = new THREE.Vector3(object.position.x - 0.68 , object.position.y , object.position.z );
+			return object.userData.leftPin.position;
+		};
+		object.userData.leftPin.connectedOnce = false;
+		object.userData.leftPin.input = 0;
+		object.userData.leftPin.name = "Leftinput";
+
+		object.userData.rightPin = [];
+		object.userData.rightPin.setposition = function(){ 
+			object.userData.rightPin.position = new THREE.Vector3(object.position.x + 0.68 , object.position.y, object.position.z );
+			return object.userData.rightPin.position;
+		};
+		object.userData.rightPin.connectedOnce = false;
+		object.userData.rightPin.input = 0;
+		object.userData.rightPin.name = "Rightinput";
+
+		object.userData.output = function(){if(object.userData.leftPin.input == 1 && object.userData.rightPin.input == 1) return 1; else return 0;};
+		objects.push(object);
+		scene.add(object);
+	}
+
+	function addNandGate(geometry, materials){
+		o++;
+		var object = new THREE.Mesh(geometry, materials);
+		object.scale.set( 2.5, 2.5, 2.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
+		object.castShadow = true;
+		object.name = "NandGate" + o;
+
+		object.userData.connectedOnce = false;
+
+		object.userData.leftPin = [];
+		object.userData.leftPin.setposition = function(){ 
+			object.userData.leftPin.position = new THREE.Vector3(object.position.x - 0.68 , object.position.y , object.position.z );
+			return object.userData.leftPin.position;
+		};
+		object.userData.leftPin.connectedOnce = false;
+		object.userData.leftPin.input = 0;
+		object.userData.leftPin.name = "Leftinput";
+
+		object.userData.rightPin = [];
+		object.userData.rightPin.setposition = function(){ 
+			object.userData.rightPin.position = new THREE.Vector3(object.position.x + 0.68 , object.position.y, object.position.z );
+			return object.userData.rightPin.position;
+		};
+		object.userData.rightPin.connectedOnce = false;
+		object.userData.rightPin.input = 0;
+		object.userData.rightPin.name = "Rightinput";
+
+		object.userData.output = function(){if(object.userData.leftPin.input == 1 && object.userData.rightPin.input == 1) return 0; else return 1;};
+		objects.push(object);
+		scene.add(object);
+	}
+
+	function addOrGate(geometry, materials){
+		o++;
+		var object = new THREE.Mesh(geometry, materials);
+		object.scale.set( 2.5, 2.5, 2.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
+		object.castShadow = true;
+		object.name = "OrGate" + o;
+
+		object.userData.connectedOnce = false;
+
+		object.userData.leftPin = [];
+		object.userData.leftPin.setposition = function(){ 
+			object.userData.leftPin.position = new THREE.Vector3(object.position.x - 0.68 , object.position.y , object.position.z );
+			return object.userData.leftPin.position;
+		};
+		object.userData.leftPin.connectedOnce = false;
+		object.userData.leftPin.input = 0;
+		object.userData.leftPin.name = "Leftinput";
+
+		object.userData.rightPin = [];
+		object.userData.rightPin.setposition = function(){ 
+			object.userData.rightPin.position = new THREE.Vector3(object.position.x + 0.68 , object.position.y, object.position.z );
+			return object.userData.rightPin.position;
+		};
+		object.userData.rightPin.connectedOnce = false;
+		object.userData.rightPin.input = 0;
+		object.userData.rightPin.name = "Rightinput";
+
+		object.userData.output = function(){if(object.userData.leftPin.input == 1 || object.userData.rightPin.input == 1) return 1; else return 0;};
 		objects.push(object);
 		scene.add(object);
 	}
@@ -119,19 +205,6 @@ function init(){
 		scene.add(object);
 	}
 
-/*
-	function addNandGate(geometry, materials){
-		o++;
-		var object = new THREE.Mesh(geometry, materials);
-		object.scale.set( 2.5, 2.5, 2.5);
-		object.position.set( 0, -2, 0);
-		object.rotation.set( 0, 0, 0);
-		object.castShadow = true;
-		object.name = "NandGate" + o;
-		objects.push(object);
-		scene.add(object);
-	}
-*/
 	//Sidebar with button functions
 	document.getElementById("open").addEventListener ("click", openNav, false);
 	document.getElementById("addMenu").addEventListener ("click", addObjects, false);
@@ -170,23 +243,23 @@ function init(){
 		document.getElementById("add_andgate").onclick = function() {
 			loader.load('./model/TwoInput.json', addAndGate); 
 		};
-	/*
+	
 		document.getElementById("add_nandgate").onclick = function() {
 			loader.load('./model/TwoInputNegate.json', addNandGate); 
 		};
 
 		document.getElementById("add_orgate").onclick = function() {
-			loader.load('./model/TwoInput.json', addModel); 
+			loader.load('./model/TwoInput.json', addOrGate); 
 		};	
 
 		document.getElementById("add_norgate").onclick = function() {
-			loader.load('./model/TwoInputNegate.json', addModel); 
+			loader.load('./model/TwoInputNegate.json', addNorGate); 
 		};
 
 		document.getElementById("add_xorgate").onclick = function() {
-			loader.load('./model/TwoInput.json', addModel); 
+			loader.load('./model/TwoInput.json', addXorGate); 
 		};
-		*/
+		
 		document.getElementById("add_endobject").onclick = function() {
 			loader.load('./model/endobject.json', addEndObject); 
 		};
@@ -243,8 +316,8 @@ function init(){
 		geometry1 = new THREE.Geometry();
 
 		var name = selectedObjects[0].name;
-		console.log(name);
-		if(selectedObjects[0].userData.connectedOnce == true && selectedObjects[0].name.search("Andgate") + 1 == false){
+		if((name.search("Negator") + 1 == true && selectedObjects[0].userData.connectedOnce == true) ||  
+			(name.search("EndObject") + 1 == true && selectedObjects[0].userData.connectedOnce == true)){
 			for(var i = 0; i < connectingLines.length; i=i+3){
 				if(selectedObjects[0] == connectingLines[i]){
 					var z = scene.getObjectByName(connectingLines[i+2].name);
@@ -294,45 +367,138 @@ function init(){
 			scene.add(line);
 
 		}else{
-			if(selectedObjects[0].position.x > selectedObjects[1].position.x){
-				selectedObjects[0].userData.input1 = selectedObjects[1].userData.output();
+			console.log(selectedObjects[0].userData.leftPin, selectedObjects[0].userData.rightPin);
+			var num1 = selectedObjects[0].userData.leftPin.setposition();
+			var num2 = selectedObjects[0].userData.rightPin.setposition();
+			var distance1 = 0;
+			var distance2 = 0;
+			distance1 = Math.abs(num1.x - selectedObjects[1].position.x);
+			distance2 = Math.abs(num2.x - selectedObjects[1].position.x);
 
-				var vector1 = new THREE.Vector3( selectedObjects[0].position.x - 0.75, selectedObjects[0].position.y, selectedObjects[0].position.z);
-				var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
-
-				geometry1.vertices.push(vector1);
-				geometry1.vertices.push(vector2);
-		
-				var line = new THREE.Line( geometry1, material );
-				line.name = "Line" + j;
-
-				connectingLines.push(selectedObjects[0]);
-				connectingLines.push(selectedObjects[1]);
-				connectingLines.push(line);
-				scene.add(line);
-
-			}else{
-				selectedObjects[0].userData.input2 = selectedObjects[1].userData.output();
-				var vector1 = new THREE.Vector3( selectedObjects[0].position.x + 0.75, selectedObjects[0].position.y, selectedObjects[0].position.z);
-				var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
-
-				geometry1.vertices.push(vector1);
-				geometry1.vertices.push(vector2);
-		
-				var line = new THREE.Line( geometry1, material );
-				line.name = "Line" + j;
-
-				connectingLines.push(selectedObjects[0]);
-				connectingLines.push(selectedObjects[1]);
-				connectingLines.push(line);
-				scene.add(line);
-			}
+			console.log(distance1, distance2);
 			
+			if(selectedObjects[0].userData.leftPin.connectedOnce == false && selectedObjects[0].userData.rightPin.connectedOnce == false){
+				if(distance1 < distance2){
+					var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+					var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+					geometry1.vertices.push(vector1);
+					geometry1.vertices.push(vector2);
+		
+					var line = new THREE.Line( geometry1, material );
+					line.name = "Line" + j;
+					
+					selectedObjects[0].userData.leftPin.connectedOnce = true;
+					console.log(selectedObjects[0].userData.leftPin.connectedOnce);
+					connectingLines.push(selectedObjects[0].userData.leftPin);
+					connectingLines.push(selectedObjects[1]);
+					connectingLines.push(line);
+					scene.add(line);
+
+				}else if(distance1 > distance2){
+					var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+					var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+					geometry1.vertices.push(vector1);
+					geometry1.vertices.push(vector2);
+		
+					var line = new THREE.Line( geometry1, material );
+					line.name = "Line" + j;
+
+					selectedObjects[0].userData.rightPin.connectedOnce = true;
+					connectingLines.push(selectedObjects[0].userData.rightPin);
+					connectingLines.push(selectedObjects[1]);
+					connectingLines.push(line);
+					scene.add(line);
+				}
+			}else if(selectedObjects[0].userData.leftPin.connectedOnce == true && selectedObjects[0].userData.rightPin.connectedOnce == false){
+				var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+				var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+				geometry1.vertices.push(vector1);
+				geometry1.vertices.push(vector2);
+		
+				var line = new THREE.Line( geometry1, material );
+				line.name = "Line" + j;
+				
+				selectedObjects[0].userData.rightPin.connectedOnce = true;
+				connectingLines.push(selectedObjects[0].userData.rightPin);
+				connectingLines.push(selectedObjects[1]);
+				connectingLines.push(line);
+				scene.add(line);
+			}else if(selectedObjects[0].userData.leftPin.connectedOnce == false && selectedObjects[0].userData.rightPin.connectedOnce == true){
+				var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+				var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+				geometry1.vertices.push(vector1);
+				geometry1.vertices.push(vector2);
+		
+				var line = new THREE.Line( geometry1, material );
+				line.name = "Line" + j;
+				
+				selectedObjects[0].userData.leftPin.connectedOnce = true;
+				connectingLines.push(selectedObjects[0].userData.leftPin);
+				connectingLines.push(selectedObjects[1]);
+				connectingLines.push(line);
+				scene.add(line);
+			}else if(selectedObjects[0].userData.leftPin.connectedOnce == true && selectedObjects[0].userData.rightPin.connectedOnce == true){
+				if(distance1 < distance2){
+
+					for(var i = 0; i < connectingLines.length; i=i+3){
+						if(selectedObjects[0].userData.leftPin == connectingLines[i]){
+							var z = scene.getObjectByName(connectingLines[i+2].name);
+							console.log(connectingLines[i+2].name);
+							connectingLines.splice(i, 3);
+							scene.remove(z);
+							i = -3;
+						}
+					}
+
+					var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+					var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+					geometry1.vertices.push(vector1);
+					geometry1.vertices.push(vector2);
+		
+					var line = new THREE.Line( geometry1, material );
+					line.name = "Line" + j;
+
+					selectedObjects[0].userData.leftPin.connectedOnce = true;
+					connectingLines.push(selectedObjects[0].userData.leftPin);
+					connectingLines.push(selectedObjects[1]);
+					connectingLines.push(line);
+					scene.add(line);
+
+				}else if(distance1 > distance2){
+
+					for(var i = 0; i < connectingLines.length; i=i+3){
+						if(selectedObjects[0].userData.rightPin == connectingLines[i]){
+							var z = scene.getObjectByName(connectingLines[i+2].name);
+							console.log(connectingLines[i+2].name);
+							connectingLines.splice(i, 3);
+							scene.remove(z);
+							i = -3;
+						}
+					}
+					var vector1 = new THREE.Vector3( selectedObjects[0].position.x, selectedObjects[0].position.y, selectedObjects[0].position.z);
+					var vector2 = new THREE.Vector3( selectedObjects[1].position.x, selectedObjects[1].position.y, selectedObjects[1].position.z);
+
+					geometry1.vertices.push(vector1);
+					geometry1.vertices.push(vector2);
+		
+					var line = new THREE.Line( geometry1, material );
+					line.name = "Line" + j;
+
+					selectedObjects[0].userData.rightPin.connectedOnce = true;
+					connectingLines.push(selectedObjects[0].userData.rightPin);
+					connectingLines.push(selectedObjects[1]);
+					connectingLines.push(line);
+					scene.add(line);
+				}
+			}	
 		}
 		j = j + 1;
 	}
-
-	
 }
 
 function onDocumentMouseDown1( event ) {
@@ -345,7 +511,7 @@ function onDocumentMouseDown1( event ) {
 					x = intersects[0].object;
 					for(var i = 0; i < connectingLines.length; i=i+3){
 						if(connectingLines[i] !== undefined){
-							if(x == connectingLines[i]){
+							if(x == connectingLines[i] || x.userData.rightPin == connectingLines[i] || x.userData.leftPin == connectingLines[0]){
 								var z = scene.getObjectByName(connectingLines[i+2].name);
 								console.log(connectingLines[i+2].name);
 								connectingLines.splice(i, 3);
@@ -412,16 +578,19 @@ function onObjectMove(){
 					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  connectingLines[i+1].position.y , connectingLines[i+1].position.z - 3);
 					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
 				}
-				/*else if(){
-					connectingLines[i+2].geometry.vertices[0] = new THREE.Vector3( connectingLines[i].position.x - 0.75, connectingLines[i].position.y , connectingLines[i].position.z);
-					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x - 0.75, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
+				else if(connectingLines[i].name.search("Leftinput") + 1 == true){
+					connectingLines[i].input = connectingLines[i+1].userData.output();
+					connectingLines[i+2].geometry.vertices[0] = connectingLines[i].setposition();
+					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
 					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);
-				}else if(connectingLines[i].position.x < connectingLines[i+1].geometry.vertices[0].x){
-					connectingLines[i+2].geometry.vertices[0] = new THREE.Vector3( connectingLines[i].position.x + 0.75, connectingLines[i].position.y , connectingLines[i].position.z);
-					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x + 0.75, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
-					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);	
-				}*/
-		connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
+					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
+				}else if(connectingLines[i].name.search("Rightinput") + 1 == true){
+					connectingLines[i].input = connectingLines[i+1].userData.output();
+					connectingLines[i+2].geometry.vertices[0] = connectingLines[i].setposition();
+					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
+					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);
+					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
+				}
 		connectingLines[i+2].geometry.verticesNeedUpdate = true;
 				
 		}
