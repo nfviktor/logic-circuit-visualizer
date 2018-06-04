@@ -200,7 +200,7 @@ function init(){
 		object.name = "EndObject" + o;
 		object.userData.connectedOnce = false;
 		object.userData.input = 0;
-		object.userData.colour = function(){ if(object.userData.input == 1) object.material.color.setHex( 0xFFFF00 ); else object.material.color.setHex( 0x000000 ); };
+		object.userData.colour = function(){ if(object.userData.input == 1) object.material.color.setHex( 0xFFFF00 ); else if(object.userData.input == 0) object.material.color.setHex( 0x000000 ); };
 		objects.push(object);
 		scene.add(object);
 	}
@@ -513,14 +513,19 @@ function onDocumentMouseDown1( event ) {
 						if(connectingLines[i] !== undefined){
 							if(x == connectingLines[i] || x.userData.rightPin == connectingLines[i] || x.userData.leftPin == connectingLines[0]){
 								var z = scene.getObjectByName(connectingLines[i+2].name);
-								console.log(connectingLines[i+2].name);
 								connectingLines.splice(i, 3);
 								scene.remove(z);
 								i = -3;
 							}
 							if(x == connectingLines[i+1]){
+								if(connectingLines[i].name.search("Negator") + 1 == true || connectingLines[i].name.search("EndObject") + 1 == true){
+									connectingLines[i].userData.input = 0;
+									if(connectingLines[i].name.search("EndObject") + 1 == true)
+										connectingLines[i].userData.colour();
+								}else if(connectingLines[i].name.search("Leftinput") + 1 == true || connectingLines[i].name.search("Rightinput") + 1 == true){
+									connectingLines[i].input = 0;
+								}
 								var z = scene.getObjectByName(connectingLines[i+2].name);
-								console.log(connectingLines[i+2].name);
 								connectingLines.splice(i, 3);
 								scene.remove(z);
 								i = -3;
@@ -528,7 +533,7 @@ function onDocumentMouseDown1( event ) {
 						}
 					}
 					scene.remove(intersects[0].object);
-					objects = objects.filter(function(el) { return el.name !== x;});
+					objects = objects.filter(function(el) { return el.name !== x.name;});
 				}
 			}
 
