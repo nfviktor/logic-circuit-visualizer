@@ -13,6 +13,7 @@ $(function(){
 // custom global variables
 	var j = 0;
 	var objects = [];
+	var selectingCubes = [];
 	var selectedObjects = [];
 	var connectingLines = [];
 	var logHelper = 1;
@@ -322,7 +323,6 @@ function init(){
 	document.getElementById("addMenu").addEventListener ("click", addObjects, false);
 	document.getElementById("removeMenu").addEventListener ("click", removeObject, false);
 	document.getElementById("connectMenu").addEventListener ("click", connectObjects, false);
-	document.getElementById("close").addEventListener ("click", closeSidenav, false);
 	document.getElementById("back01").addEventListener ("click", goBack, false);
 	document.getElementById("back02").addEventListener ("click", goBack, false);
 	document.getElementById("back03").addEventListener ("click", goBack, false);
@@ -338,9 +338,9 @@ function init(){
 
 	function closeHelpBar() {
 		document.getElementById("helpRead").style.width = "0";
-		document.getElementById("openHelp").style.width = "120px";
+		document.getElementById("openHelp").style.width = "100px";
 	}
-		
+	
 	function openNav() {
 		dragControls = new THREE.DragControls( objects, camera, renderer.domElement);
 		controls.enabled = false;
@@ -422,13 +422,6 @@ function init(){
 	    scene.remove(axis);
 		scene.remove(grid);
 	    camera.position.set( 40, 40, -40 );
-	}
-
-	function closeSidenav(){
-		document.getElementById("removeObject").style.width = "0";
-		document.getElementById("connectObjects").style.width = "0";
-		document.getElementById("addObjects").style.width = "0";
-	    document.getElementById("chooseMenu").style.width = "0";
 	}
 
 	function connectObjects(){
@@ -806,6 +799,24 @@ function animate() {
 				document.getElementById("log").innerHTML = "";
 				document.getElementById("log").style.display = "none";
 			}
+
+		if(document.getElementById("chooseMenu").style.width == "220px"){
+			console.log("i see chooseMenu");
+			document.getElementById("helpText").innerHTML = "Choose between Adding, Removing an object to the scene, or Connect objects together. ";
+		}else if(document.getElementById("addObjects").style.width == "220px"){
+			console.log("i see chooseMenu");
+			document.getElementById("helpText").innerHTML = "Click on a button on the Sidebar to add an object to our Scene.";
+		}else if(document.getElementById("removeObject").style.width == "220px"){
+			console.log("i see Remove Objects");
+			document.getElementById("helpText").innerHTML = "Click on an Object to remove it from the Scene. ";
+		}else if(document.getElementById("connectObjects").style.width == "220px"){
+			console.log("i see connect objects");
+			document.getElementById("helpText").innerHTML = "Click on objects to Connect them together. 1. is  ";
+		}else{
+			document.getElementById("helpText").innerHTML = "You are in View Mode. <br />You can rotate the camera with left mouse button, and zoom with mouse wheel.";
+		}
+		
+
     	onObjectMove();
 		render();		
 		update();
