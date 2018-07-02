@@ -15,33 +15,57 @@
 	</head>
 
 	<body>
-		<div id="mySidenav" class="sidenav">
-  			<a href="javascript:void(0)" class="closebtn" id="close">&times;</a>
-  			<a href="javascript:void(0)" id="addMenu">Add Objects</p>
-  			<a href="javascript:void(0)" id="removeMenu">Remove Objects</p>
-  			<a href="javascript:void(0)" id="connectMenu">Connect Objects</p>
+		<div id="changeModes" class="modechanger">
+			<a href="javascript:void(0)" id="ViewMode">View Mode</a>
+			<a href="javascript:void(0)" id="EditMode">Edit Mode</a>
 		</div>
+
+		<div id="log">
+		</div>
+
+		<div id="helpRead" class="help">
+			<span class="headings">Help</span>
+			<p id="helpText"></p>
+			<a href="javascript:void(0)" id="hide">Hide</a>
+		</div>
+
+		<span id="openHelp" class="helpopener">Help</span>
+
+		<div id="chooseMenu" class="sidenav">
+			<span class="headings">Main menu</span>
+			<hr />
+  			<a href="javascript:void(0)" id="addMenu">Add Objects</a>
+  			<a href="javascript:void(0)" id="removeMenu">Remove Objects</a>
+  			<a href="javascript:void(0)" id="connectMenu">Connect Objects</a>
+  			<a href="javascript:void(0)" id="close">Close menu</a>
+		</div>
+
 		<div id="addObjects" class="sidenav">
-			<a href="javascript:void(0)" class="closebtn" id="close1">&times;</a>
-  			<a href="javascript:void(0)" id="add_negator">Add Negator</p>
-  			<a href="javascript:void(0)" id="add_andgate">Add And Gate</p>
-  			<a href="javascript:void(0)" id="add_nandgate">Add Nand Gate</p>
-  			<a href="javascript:void(0)" id="add_orgate">Add Or Gate</p>
-  			<a href="javascript:void(0)" id="add_norgate">Add Nor Gate</p>
-  			<a href="javascript:void(0)" id="add_xorgate">Add Xor Gate</p>
-  			<a href="javascript:void(0)" id="add_endobject">Add Endobject</p>	
+			<span class="headings">Add Objects</span>
+			<hr />
+			<a href="javascript:void(0)" id="add_input">Input switch</a>
+  			<a href="javascript:void(0)" id="add_negator">Negator</a>
+  			<a href="javascript:void(0)" id="add_andgate">And Gate</a>
+  			<a href="javascript:void(0)" id="add_nandgate">Nand Gate</a>
+  			<a href="javascript:void(0)" id="add_orgate">Or Gate</a>
+  			<a href="javascript:void(0)" id="add_norgate">Nor Gate</a>
+  			<a href="javascript:void(0)" id="add_xorgate">Xor Gate</a>
+  			<a href="javascript:void(0)" id="add_endobject">Endobject</a>
 			<a href="javascript:void(0)" class="back" id="back01">Back</a>
 		</div>
+
 		<div id="removeObject" class="sidenav">
-			<a href="javascript:void(0)" class="closebtn" id="close2">&times;</a>
+			<span class="headings">Remove Objects</span>
+			<hr />
 			<a href="javascript:void(0)" class="back" id="back02">Back</a>
 		</div>
+
 		<div id="connectObjects" class="sidenav">
-			<a href="javascript:void(0)" class="closebtn" id="close3">&times;</a>
+			<span class="headings">Connect Objects</span>
+			<hr />
 			<a href="javascript:void(0)" class="connect" id="connectButton">Connect</a>
 			<a href="javascript:void(0)" class="back" id="back03">Back</a>
 		</div>
-		<span id="open">open</span>
 
 		<div id="main">
 			<div id="webGL-container">

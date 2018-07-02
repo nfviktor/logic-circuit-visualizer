@@ -15,7 +15,8 @@ $(function(){
 	var objects = [];
 	var selectedObjects = [];
 	var connectingLines = [];
-	var log = document.getElementById("log");
+	var logHelper = 1;
+	var helpChanger = 0;
 
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
@@ -60,7 +61,7 @@ function init(){
 
 	//Plane geometry
 	var planeGeometry = new THREE.PlaneGeometry(1000,1000,1000);
-	var planeMaterial = new THREE.MeshLambertMaterial({color:0xFFFFFF});
+	var planeMaterial = new THREE.MeshLambertMaterial({color:0xAAAAAA});
 	var plane = new THREE.Mesh(planeGeometry,planeMaterial);
 	plane.position.y = -2.6;
 	plane.rotation.x = -0.5*Math.PI;
@@ -72,9 +73,30 @@ function init(){
 	var o = 0;
 	// zarojelbe 1. az eleresi ut, a 2. a callback function!
 	//loader.load('./model/Wood2.json', addModel);
+
+	function addInput(geometry, materials){
+		o++;
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/AndGate.png') });
+		console.log(materials1);
+		geometry.computeMorphNormals();
+		materials1.morphTargets = true;
+		var object = new THREE.Mesh(geometry, materials1);
+		object.scale.set( 1.5, 1.5, 1.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( Math.PI, Math.PI, Math.PI);
+		object.castShadow = true;
+		object.name = "InputSwitch" + o;
+		object.userData.out = 0;
+		object.userData.setOutput = function(){if(object.userData.out == 0) {object.userData.out = 1 ;}else object.userData.out = 0; };
+		object.userData.output = function(){return object.userData.out;};
+		objects.push(object);
+		scene.add(object);
+	}
+
 	function addNegator(geometry, materials){
 		o++;
-		var object = new THREE.Mesh(geometry, materials);
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/Negator.png') });
+		var object = new THREE.Mesh(geometry, materials1);
 		object.scale.set( 2, 2, 2);
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
@@ -89,7 +111,8 @@ function init(){
 
 	function addAndGate(geometry, materials){
 		o++;
-		var object = new THREE.Mesh(geometry, materials);
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/AndGate.png') });
+		var object = new THREE.Mesh(geometry, materials1);
 		object.scale.set( 2.5, 2.5, 2.5);
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
@@ -123,7 +146,8 @@ function init(){
 
 	function addNandGate(geometry, materials){
 		o++;
-		var object = new THREE.Mesh(geometry, materials);
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/AndGate.png') });
+		var object = new THREE.Mesh(geometry, materials1);
 		object.scale.set( 2.5, 2.5, 2.5);
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
@@ -157,7 +181,9 @@ function init(){
 
 	function addOrGate(geometry, materials){
 		o++;
-		var object = new THREE.Mesh(geometry, materials);
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/OrGate.png') });
+		materials1.side = THREE.DoubleSide;
+		var object = new THREE.Mesh(geometry, materials1);
 		object.scale.set( 2.5, 2.5, 2.5);
 		object.position.set( 0, -2, 0);
 		object.rotation.set( 0, 0, 0);
@@ -189,86 +215,187 @@ function init(){
 		scene.add(object);
 	}
 
-	function addEndObject(geometry, materials){
+	function addNorGate(geometry, materials){
 		o++;
-		var object = new THREE.Mesh(geometry, materials);
-		object.material.color.setHex( 0x000000 );
-		object.scale.set( 0.9, 0.9, 0.9);
-		object.position.set( 0, -3, 0);
-		object.rotation.set( 0, Math.PI, 0);
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/OrGate.png') });
+		materials1.side = THREE.DoubleSide;
+		var object = new THREE.Mesh(geometry, materials1);
+		object.scale.set( 2.5, 2.5, 2.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
 		object.castShadow = true;
-		object.name = "EndObject" + o;
+		object.name = "NorGate" + o;
+
 		object.userData.connectedOnce = false;
-		object.userData.input = 0;
-		object.userData.colour = function(){ if(object.userData.input == 1) object.material.color.setHex( 0xFFFF00 ); else if(object.userData.input == 0) object.material.color.setHex( 0x000000 ); };
+
+		object.userData.leftPin = [];
+		object.userData.leftPin.setposition = function(){ 
+			object.userData.leftPin.position = new THREE.Vector3(object.position.x - 0.68 , object.position.y , object.position.z );
+			return object.userData.leftPin.position;
+		};
+		object.userData.leftPin.connectedOnce = false;
+		object.userData.leftPin.input = 0;
+		object.userData.leftPin.name = "Leftinput";
+
+		object.userData.rightPin = [];
+		object.userData.rightPin.setposition = function(){ 
+			object.userData.rightPin.position = new THREE.Vector3(object.position.x + 0.68 , object.position.y, object.position.z );
+			return object.userData.rightPin.position;
+		};
+		object.userData.rightPin.connectedOnce = false;
+		object.userData.rightPin.input = 0;
+		object.userData.rightPin.name = "Rightinput";
+
+		object.userData.output = function(){if(object.userData.leftPin.input == 1 || object.userData.rightPin.input == 1) return 1; else return 0;};
 		objects.push(object);
 		scene.add(object);
 	}
 
+	function addXorGate(geometry, materials){
+		o++;
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/XorGate.png') });
+		materials1.side = THREE.DoubleSide;
+		var object = new THREE.Mesh(geometry, materials1);
+		object.scale.set( 2.5, 2.5, 2.5);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
+		object.castShadow = true;
+		object.name = "XorGate" + o;
+
+		object.userData.connectedOnce = false;
+
+		object.userData.leftPin = [];
+		object.userData.leftPin.setposition = function(){ 
+			object.userData.leftPin.position = new THREE.Vector3(object.position.x - 0.68 , object.position.y , object.position.z );
+			return object.userData.leftPin.position;
+		};
+		object.userData.leftPin.connectedOnce = false;
+		object.userData.leftPin.input = 0;
+		object.userData.leftPin.name = "Leftinput";
+
+		object.userData.rightPin = [];
+		object.userData.rightPin.setposition = function(){ 
+			object.userData.rightPin.position = new THREE.Vector3(object.position.x + 0.68 , object.position.y, object.position.z );
+			return object.userData.rightPin.position;
+		};
+		object.userData.rightPin.connectedOnce = false;
+		object.userData.rightPin.input = 0;
+		object.userData.rightPin.name = "Rightinput";
+
+		object.userData.output = function(){if(object.userData.leftPin.input == 1 || object.userData.rightPin.input == 1) return 1; else return 0;};
+		objects.push(object);
+		scene.add(object);
+	}
+
+	function addEndObject(geometry, materials){
+		o++;
+		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/EndObjectOff.png') });
+		materials1.side = THREE.DoubleSide;
+		var object = new THREE.Mesh(geometry, materials1);
+		object.scale.set( 2, 2, 2);
+		object.position.set( 0, -2, 0);
+		object.rotation.set( 0, 0, 0);
+		object.castShadow = true;
+		object.name = "EndObject" + o;
+		object.userData.connectedOnce = false;
+		object.userData.input = 0;
+		object.userData.material1 = THREE.ImageUtils.loadTexture( './model/Textures/EndObjectOn.png' ); ;
+		object.userData.material2 = THREE.ImageUtils.loadTexture( './model/Textures/EndObjectOff.png' );
+		object.userData.colour = function(){ 
+			if(object.userData.input == 1){
+				object.material.map = object.userData.material1; 
+				object.material.needsUpdate = true;
+			}else if(object.userData.input == 0){
+				object.material.map = object.userData.material2;
+				object.material.needsUpdate = true;
+			};
+		}
+		objects.push(object);
+		scene.add(object);
+	}
+
+
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	//Sidebar with button functions
-	document.getElementById("open").addEventListener ("click", openNav, false);
+	document.getElementById("EditMode").addEventListener ("click", openNav, false);
+	document.getElementById("ViewMode").addEventListener ("click", closeNav, false);
 	document.getElementById("addMenu").addEventListener ("click", addObjects, false);
 	document.getElementById("removeMenu").addEventListener ("click", removeObject, false);
 	document.getElementById("connectMenu").addEventListener ("click", connectObjects, false);
+	document.getElementById("close").addEventListener ("click", closeSidenav, false);
 	document.getElementById("back01").addEventListener ("click", goBack, false);
 	document.getElementById("back02").addEventListener ("click", goBack, false);
 	document.getElementById("back03").addEventListener ("click", goBack, false);
-	document.getElementById("close").addEventListener ("click", closeNav, false);
-	document.getElementById("close1").addEventListener ("click", closeNav, false);
-	document.getElementById("close2").addEventListener ("click", closeNav, false);
-	document.getElementById("close3").addEventListener ("click", closeNav, false);
+
+	//Helpbar with button functions
+	document.getElementById("hide").addEventListener ("click", closeHelpBar, false);
+	document.getElementById("openHelp").addEventListener ("click", openHelpBar, false);
+
+	function openHelpBar() {
+		document.getElementById("helpRead").style.width = "220px";
+		document.getElementById("openHelp").style.width = "0";
+	}
+
+	function closeHelpBar() {
+		document.getElementById("helpRead").style.width = "0";
+		document.getElementById("openHelp").style.width = "120px";
+	}
 		
 	function openNav() {
 		dragControls = new THREE.DragControls( objects, camera, renderer.domElement);
 		controls.enabled = false;
 		dragControls.activate();
 		selectedObjects = [];
-    	document.getElementById("mySidenav").style.width = "250px";
-    	document.getElementById("open").style.display = "none";
+    	document.getElementById("chooseMenu").style.width = "220px";
     	camera.position.set( 0, 60, 0 );
     	camera.rotation.y = (-90 * Math.PI) / 180;
     	scene.add(axis);
 		scene.add(grid);
 		camera.lookAt(scene.position);
+		document.addEventListener( 'mousedown', onDocumentMouseDown3, false );
 	}
 
 	function addObjects(){
-    	document.getElementById("mySidenav").style.width = "0";
-    	document.getElementById("addObjects").style.width = "250px";
+    	document.getElementById("chooseMenu").style.width = "0";
+    	document.getElementById("addObjects").style.width = "220px";
+
+    	document.getElementById("add_input").onclick = function() {
+    		loader.load('./model/InputObjectJoinedTextured001.json', addInput);
+    	};
 
 		document.getElementById("add_negator").onclick = function() {
-			loader.load('./model/Negator.json', addNegator);
+			loader.load('./model/NegatorJoinedTextured001.json', addNegator);
 		};
 
 		document.getElementById("add_andgate").onclick = function() {
-			loader.load('./model/TwoInput.json', addAndGate); 
+			loader.load('./model/AndGateJoinedTextured001.json', addAndGate); 
 		};
 	
 		document.getElementById("add_nandgate").onclick = function() {
-			loader.load('./model/TwoInputNegate.json', addNandGate); 
+			loader.load('./model/NandGateJoinedTextured001.json', addNandGate); 
 		};
 
 		document.getElementById("add_orgate").onclick = function() {
-			loader.load('./model/TwoInput.json', addOrGate); 
+			loader.load('./model/OrGateJoinedTextured001.json', addOrGate); 
 		};	
 
 		document.getElementById("add_norgate").onclick = function() {
-			loader.load('./model/TwoInputNegate.json', addNorGate); 
+			loader.load('./model/NorGateJoinedTextured001.json', addNorGate); 
 		};
 
 		document.getElementById("add_xorgate").onclick = function() {
-			loader.load('./model/TwoInput.json', addXorGate); 
+			loader.load('./model/XorGateJoinedTextured001.json', addXorGate); 
 		};
 		
 		document.getElementById("add_endobject").onclick = function() {
-			loader.load('./model/endobject.json', addEndObject); 
+			loader.load('./model/EndObjectJoinedTextured001.json', addEndObject); 
 		};
 	}
 
 	function removeObject(){
 		dragControls.dispose();
-		document.getElementById("mySidenav").style.width = "0";
-		document.getElementById("removeObject").style.width = "250px";
+		document.getElementById("chooseMenu").style.width = "0";
+		document.getElementById("removeObject").style.width = "220px";
 		document.addEventListener( 'mousedown', onDocumentMouseDown1, false );
 	}
 
@@ -283,6 +410,7 @@ function init(){
 	}
 
 	function closeNav() {
+		document.removeEventListener( 'mousedown', onDocumentMouseDown3, false );
 		document.removeEventListener( 'mousedown', onDocumentMouseDown2, false );
 		document.removeEventListener( 'mousedown', onDocumentMouseDown1, false );
 		dragControls.dispose();
@@ -290,17 +418,23 @@ function init(){
 		document.getElementById("removeObject").style.width = "0";
 		document.getElementById("connectObjects").style.width = "0";
 		document.getElementById("addObjects").style.width = "0";
-	    document.getElementById("mySidenav").style.width = "0";
-	    document.getElementById("open").style.display = "block";
+	    document.getElementById("chooseMenu").style.width = "0";
 	    scene.remove(axis);
 		scene.remove(grid);
 	    camera.position.set( 40, 40, -40 );
 	}
 
+	function closeSidenav(){
+		document.getElementById("removeObject").style.width = "0";
+		document.getElementById("connectObjects").style.width = "0";
+		document.getElementById("addObjects").style.width = "0";
+	    document.getElementById("chooseMenu").style.width = "0";
+	}
+
 	function connectObjects(){
 		dragControls.dispose();
-		document.getElementById("mySidenav").style.width = "0";
-		document.getElementById("connectObjects").style.width = "250px";
+		document.getElementById("chooseMenu").style.width = "0";
+		document.getElementById("connectObjects").style.width = "220px";
 		document.addEventListener( 'mousedown', onDocumentMouseDown2, false );
 		document.getElementById("connectButton").addEventListener ("click", connectThem , false);
 	}
@@ -501,6 +635,29 @@ function init(){
 	}
 }
 
+function onDocumentMouseDown3( event ) {
+				event.preventDefault();
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				raycaster.setFromCamera( mouse, camera );
+				var intersects = raycaster.intersectObjects( objects );
+				if ( intersects.length > 0 ){
+					var x = intersects[0].object;
+						if(x.name.search("InputSwitch") + 1 == true){
+							if(x.userData.out == 0){
+								x.userData.setOutput();
+								x.morphTargetInfluences[0] = 0;
+								x.morphTargetInfluences[31] = 1;
+							}else{
+								x.userData.setOutput();
+								x.morphTargetInfluences[31] = 0;
+								x.morphTargetInfluences[0] = 1;
+							}
+						}
+					}
+				}
+
+
 function onDocumentMouseDown1( event ) {
 				event.preventDefault();
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -578,9 +735,9 @@ function onObjectMove(){
 			}else if (connectingLines[i].name.search("EndObject") + 1 == true){
 					connectingLines[i].userData.input = connectingLines[i+1].userData.output();
 					connectingLines[i].userData.colour();
-					connectingLines[i+2].geometry.vertices[0] = new THREE.Vector3( connectingLines[i].position.x, connectingLines[i].position.y + 1, connectingLines[i].position.z);
-					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x,  connectingLines[i].position.y + 1 , connectingLines[i].position.z + 2);
-					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  connectingLines[i+1].position.y , connectingLines[i+1].position.z - 3);
+					connectingLines[i+2].geometry.vertices[0] = new THREE.Vector3( connectingLines[i].position.x, connectingLines[i].position.y , connectingLines[i].position.z);
+					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x,  connectingLines[i].position.y , connectingLines[i].position.z + 2);
+					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  connectingLines[i+1].position.y , connectingLines[i+1].position.z - 2);
 					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
 				}
 				else if(connectingLines[i].name.search("Leftinput") + 1 == true){
@@ -595,6 +752,12 @@ function onObjectMove(){
 					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
 					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);
 					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
+				}else if(connectingLines[i].name.search("InputSwitch") + 1 == true){
+					connectingLines[i].input = connectingLines[i+1].userData.output();
+					connectingLines[i+2].geometry.vertices[0] = connectingLines[i].setposition();
+					connectingLines[i+2].geometry.vertices[1] = new THREE.Vector3( connectingLines[i].position.x, (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i].position.z + 3);
+					connectingLines[i+2].geometry.vertices[2] = new THREE.Vector3( connectingLines[i+1].position.x,  (connectingLines[i].position.y + connectingLines[i+1].position.y) / 2 , connectingLines[i+1].position.z - 3);
+					connectingLines[i+2].geometry.vertices[3] = connectingLines[i+1].position;
 				}
 		connectingLines[i+2].geometry.verticesNeedUpdate = true;
 				
@@ -602,19 +765,59 @@ function onObjectMove(){
 	}
 }
 
+function onDocumentMouseMove( event ) {
+				event.preventDefault();
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
 function animate() {
     	requestAnimationFrame( animate );
+    		raycaster.setFromCamera( mouse, camera );
+			var intersects = raycaster.intersectObjects( objects );
+			if ( intersects.length > 0 ) {
+				if(logHelper==1){
+					var name = intersects[0].object.name;
+					var input = "";
+					var output = "";
+					if(name.search("Negator") + 1 == true){
+						input = intersects[0].object.userData.input;
+						output = intersects[0].object.userData.output();
+					}else if(name.search("EndObject") + 1 == true){
+						input = intersects[0].object.userData.input;
+						output = "";
+					}else if(name.search("InputSwitch") + 1 == true){
+						input = "";
+						output = intersects[0].object.userData.output();
+					}else{
+						input = '<br />Left In.: ' + intersects[0].object.userData.leftPin.input + '<br />Right In.: ' + intersects[0].object.userData.rightPin.input;
+						output = intersects[0].object.userData.output();
+					}
+					var loggingText = document.createElement('span'); // is a node
+					loggingText.innerHTML = 'Object name: '+intersects[0].object.name+
+					'<br />'+'Object output: '+output+
+					'<br />'+'Object Inputs: '+input;
+					document.getElementById("log").appendChild(loggingText);
+				}
+				logHelper=2;
+				document.getElementById("log").style.display = "block";
+			}else{
+				logHelper=1;
+				document.getElementById("log").innerHTML = "";
+				document.getElementById("log").style.display = "none";
+			}
     	onObjectMove();
 		render();		
 		update();
 }
 
-function update(){	
+function update(){			
 		controls.update();	
 }
 
 function render() {
-		renderer.render( scene, camera );
+	
+	renderer.render( scene, camera );
 }
 
 $("#webGL-container").append(renderer.domElement);

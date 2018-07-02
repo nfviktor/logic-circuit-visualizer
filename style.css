@@ -5,67 +5,157 @@ body{
 #webGL-container{
 	z-index: 1;
 }
+
+
 #log{
-	margin: 0 33% 0 33%;
-	padding: auto;
-	text-align: center;
-	color: red;
-	position: fixed;
-	width: 33%;
-	height: 30px;
-	background-color: black;
-}
-#open{
-	margin: auto;
-	padding: 10px 20px 10px 20px;
+    display: none;
+    position: fixed;
+    top: 82%;
+    right: 30px;
 	text-align: center;
 	color: white;
-	display: block;
-	background: rgba(0,0,0,0.7);
-	position: fixed;
-	height: 30px;
-	width: 60px;
-	z-index: 1000;
-}
-/* The side navigation menu */
-.sidenav {
-    height: 100%; /* 100% Full-height */
-    width: 0; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
-    z-index: 999; /* Stay on top */
-    top: 0; /* Stay at the top */
-    left: 0;
-    background-color: #111; /* Black*/
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 60px; /* Place content 60px from the top */
-    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-/* The navigation menu links */
-.sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
+    min-width: 200px;
+	width: 20%;
+	height: 100px;
+    padding: 10px 0 0 0;
+	background-color: rgba(0,0,0,0.85);
+    border-radius: 6px;
     transition: 0.3s;
 }
 
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-    color: #f1f1f1;
+
+.help{
+    position: fixed;
+    z-index: 2;
+    margin: auto;
+    right: 0;
+    top:15%;
+    height: 400px;
+    width: 220px;
+    padding: 20px 0 0 0;
+    background-color: rgba(0,0,0,0.85);
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    transition: 0.2s;
+}
+.help span.headings{
+    font-size: 20px;
+    display: block;
+    padding: 5px 8px 5px 20px;
+    color: white;
+    text-shadow: 0 0 2px #FFF;
+}
+.help p{
+    font-size: 20px;
+    display: block;
+    padding: 5px 8px 5px 20px;
+    color: white;
+    text-shadow: 0 0 2px #FFF;
+}
+.help a {
+    padding: 5px 8px 5px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: gray;
+    display: block;
+}
+.help a:hover {
+    text-shadow: 0 0 2px #FFF;
+    color: white;
+    transition: 0.2s;
+}
+.helpopener{
+    top:40%;
+    bottom: 40%;
+    right: 0;
+    padding: 20px 0 20px 0;
+    position: fixed;
+    display: block;
+    width: 0;
+    height: 35px;
+    background-color: rgba(0,0,0,0.85);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+    font-size: 20px;
+    transition: 0.2s;
 }
 
-/* Position and style the close button (top right corner) */
-.sidenav .closebtn {
-    position: absolute;
+
+#changeModes{
     top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
+    left: 0;
+	margin: auto;
+	background: rgba(0,0,0,0.85);
+    border-bottom-right-radius: 10px;
+	position: fixed;
+	height: 90px;
+	width: 150px;
+	z-index: 1000;
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+#changeModes a{
+    font-size: 20px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 28px;  
+    text-decoration: none;
+    display: block;
+    color: gray;
+    height: 30px;
+    padding: 7px 15px 7px 5px;
+}
+
+#changeModes a:hover{
+    text-shadow: 0 0 2px #FFF;
+    color: white;
+    transition: 0.2s;
+}
+
+.sidenav {
+    height: 400px; 
+    width: 0; 
+    position: fixed; 
+    z-index: 999;
+    margin: auto auto auto 0;
+    top: 15%;
+    background-color: rgba(0,0,0,0.7);
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    overflow-x: hidden; 
+    padding: 20px 0 0 0;
+    transition: 0.3s; 
+}
+
+.sidenav hr{
+    width: 90%;
+    background: linear-gradient(to right, red , white, red);
+}
+
+.sidenav span.headings{
+    font-size: 20px;
+    display: block;
+    padding: 5px 8px 5px 20px;
+    color: white;
+    text-shadow: 0 0 2px #FFF;
+}
+
+.sidenav a {
+    padding: 5px 8px 5px 20px;
+    text-decoration: none;
+    font-size: 20px;
+    color: gray;
+    display: block;
+}
+
+.sidenav a:hover {
+    text-shadow: 0 0 2px #FFF;
+    color: white;
+    transition: 0.2s;
+}
+
 @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
