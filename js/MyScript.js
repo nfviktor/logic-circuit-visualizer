@@ -78,7 +78,6 @@ function init(){
 	function addInput(geometry, materials){
 		o++;
 		var materials1 = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture('./model/Textures/AndGate.png') });
-		console.log(materials1);
 		geometry.computeMorphNormals();
 		materials1.morphTargets = true;
 		var object = new THREE.Mesh(geometry, materials1);
@@ -345,7 +344,17 @@ function init(){
 		dragControls = new THREE.DragControls( objects, camera, renderer.domElement);
 		controls.enabled = false;
 		dragControls.activate();
+
 		selectedObjects = [];
+		selectingCubes = [];
+		var z = scene.getObjectByName("wireframe1");
+		scene.remove(z);
+		z = scene.getObjectByName("wireframe2");
+		scene.remove(z);
+
+		document.getElementById("removeObject").style.width = "0";
+		document.getElementById("connectObjects").style.width = "0";
+		document.getElementById("addObjects").style.width = "0";
     	document.getElementById("chooseMenu").style.width = "220px";
     	camera.position.set( 0, 60, 0 );
     	camera.rotation.y = (-90 * Math.PI) / 180;
@@ -406,6 +415,13 @@ function init(){
 		document.getElementById("removeObject").style.width = "0";
 		document.getElementById("connectObjects").style.width = "0";
 		document.getElementById("addObjects").style.width = "0";
+
+		selectingCubes = [];
+		var z = scene.getObjectByName("wireframe1");
+		scene.remove(z);
+		z = scene.getObjectByName("wireframe2");
+		scene.remove(z);
+
 		openNav();
 	}
 
@@ -419,6 +435,13 @@ function init(){
 		document.getElementById("connectObjects").style.width = "0";
 		document.getElementById("addObjects").style.width = "0";
 	    document.getElementById("chooseMenu").style.width = "0";
+
+	    selectedObjects = [];
+		selectingCubes = [];
+		var z = scene.getObjectByName("wireframe1");
+		scene.remove(z);
+		z = scene.getObjectByName("wireframe2");
+		scene.remove(z);
 	    scene.remove(axis);
 		scene.remove(grid);
 	    camera.position.set( 40, 40, -40 );
@@ -435,6 +458,11 @@ function init(){
 	function connectThem(){
 		drawLine();
 		selectedObjects = [];
+		selectingCubes = [];
+		var z = scene.getObjectByName("wireframe1");
+		scene.remove(z);
+		z = scene.getObjectByName("wireframe2");
+		scene.remove(z);
 	}
 
 	function drawLine(){
@@ -448,7 +476,6 @@ function init(){
 			for(var i = 0; i < connectingLines.length; i=i+3){
 				if(selectedObjects[0] == connectingLines[i]){
 					var z = scene.getObjectByName(connectingLines[i+2].name);
-					console.log(connectingLines[i+2].name);
 					connectingLines.splice(i, 3);
 					scene.remove(z);
 					i = -3;
@@ -494,15 +521,12 @@ function init(){
 			scene.add(line);
 
 		}else{
-			console.log(selectedObjects[0].userData.leftPin, selectedObjects[0].userData.rightPin);
 			var num1 = selectedObjects[0].userData.leftPin.setposition();
 			var num2 = selectedObjects[0].userData.rightPin.setposition();
 			var distance1 = 0;
 			var distance2 = 0;
 			distance1 = Math.abs(num1.x - selectedObjects[1].position.x);
 			distance2 = Math.abs(num2.x - selectedObjects[1].position.x);
-
-			console.log(distance1, distance2);
 			
 			if(selectedObjects[0].userData.leftPin.connectedOnce == false && selectedObjects[0].userData.rightPin.connectedOnce == false){
 				if(distance1 < distance2){
@@ -516,7 +540,6 @@ function init(){
 					line.name = "Line" + j;
 					
 					selectedObjects[0].userData.leftPin.connectedOnce = true;
-					console.log(selectedObjects[0].userData.leftPin.connectedOnce);
 					connectingLines.push(selectedObjects[0].userData.leftPin);
 					connectingLines.push(selectedObjects[1]);
 					connectingLines.push(line);
@@ -574,7 +597,6 @@ function init(){
 					for(var i = 0; i < connectingLines.length; i=i+3){
 						if(selectedObjects[0].userData.leftPin == connectingLines[i]){
 							var z = scene.getObjectByName(connectingLines[i+2].name);
-							console.log(connectingLines[i+2].name);
 							connectingLines.splice(i, 3);
 							scene.remove(z);
 							i = -3;
@@ -601,7 +623,6 @@ function init(){
 					for(var i = 0; i < connectingLines.length; i=i+3){
 						if(selectedObjects[0].userData.rightPin == connectingLines[i]){
 							var z = scene.getObjectByName(connectingLines[i+2].name);
-							console.log(connectingLines[i+2].name);
 							connectingLines.splice(i, 3);
 							scene.remove(z);
 							i = -3;
@@ -696,14 +717,51 @@ function onDocumentMouseDown2( event ) {
 				if ( intersects.length > 0 ) {
 					if(selectedObjects.length < 1){
 						selectedObjects[0] = intersects[0].object;
-						console.log(selectedObjects);
+						var geometry = new THREE.BoxBufferGeometry( 2.5, 2, 3.3 );
+						var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry( geometry )
+						var mat = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
+						var wireframe = new THREE.LineSegments( geo, mat );
+
+						wireframe.position.x = selectedObjects[0].position.x;
+						wireframe.position.y = selectedObjects[0].position.y + 0.61;
+						wireframe.position.z = selectedObjects[0].position.z - 0.3;
+						wireframe.name = "wireframe1";
+
+						selectingCubes.push(wireframe);
+						scene.add( wireframe ); 
+
+
 					}else if(selectedObjects[0].name == intersects[0].object.name){
 						console.log("Cant connect with itself!");
 						console.log(selectedObjects);
 					}else{
 						selectedObjects[1] = selectedObjects[0];
 						selectedObjects[0] = intersects[0].object;
-						console.log(selectedObjects);
+
+						if(selectingCubes.length < 2){
+							var geometry = new THREE.BoxBufferGeometry( 2.5, 2, 3.3 );
+							var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry( geometry )
+							var mat = new THREE.LineBasicMaterial( { color: 0x00ff00, linewidth: 2 } );
+							var wireframe = new THREE.LineSegments( geo, mat );
+							wireframe.position.x = selectedObjects[0].position.x;
+							wireframe.position.y = selectedObjects[0].position.y + 0.61;
+							wireframe.position.z = selectedObjects[0].position.z - 0.3;
+							wireframe.name = "wireframe2";
+							selectingCubes.push(wireframe);
+							scene.add( wireframe );
+
+							console.log(selectingCubes);
+							
+						}else{
+							selectingCubes[1].position.x = selectingCubes[0].position.x;
+							selectingCubes[1].position.y = selectingCubes[0].position.y + 0.61;
+							selectingCubes[1].position.z = selectingCubes[0].position.z - 0.3;
+
+							selectingCubes[0].position.x = selectedObjects[0].position.x;
+							selectingCubes[0].position.y = selectedObjects[0].position.y + 0.61;
+							selectingCubes[0].position.z = selectedObjects[0].position.z - 0.3;
+
+						}
 					}
 				}
 			}
@@ -801,21 +859,16 @@ function animate() {
 			}
 
 		if(document.getElementById("chooseMenu").style.width == "220px"){
-			console.log("i see chooseMenu");
 			document.getElementById("helpText").innerHTML = "Choose between Adding, Removing an object to the scene, or Connect objects together. ";
 		}else if(document.getElementById("addObjects").style.width == "220px"){
-			console.log("i see chooseMenu");
 			document.getElementById("helpText").innerHTML = "Click on a button on the Sidebar to add an object to our Scene.";
 		}else if(document.getElementById("removeObject").style.width == "220px"){
-			console.log("i see Remove Objects");
 			document.getElementById("helpText").innerHTML = "Click on an Object to remove it from the Scene. ";
 		}else if(document.getElementById("connectObjects").style.width == "220px"){
-			console.log("i see connect objects");
-			document.getElementById("helpText").innerHTML = "Click on objects to Connect them together. 1. is  ";
+			document.getElementById("helpText").innerHTML = "Click on objects to Connect them together.<br />Red square is input, green is output. ";
 		}else{
 			document.getElementById("helpText").innerHTML = "You are in View Mode. <br />You can rotate the camera with left mouse button, and zoom with mouse wheel.";
 		}
-		
 
     	onObjectMove();
 		render();		
