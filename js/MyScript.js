@@ -865,7 +865,7 @@ function animate() {
 		}else if(document.getElementById("removeObject").style.width == "220px"){
 			document.getElementById("helpText").innerHTML = "Click on an Object to remove it from the Scene. ";
 		}else if(document.getElementById("connectObjects").style.width == "220px"){
-			document.getElementById("helpText").innerHTML = "Click on objects to Connect them together.<br />Red square is input, green is output. ";
+			document.getElementById("helpText").innerHTML = "Click on objects to Connect them together.<br />Red square's output will be connected to green square's input. ";
 		}else{
 			document.getElementById("helpText").innerHTML = "You are in View Mode. <br />You can rotate the camera with left mouse button, and zoom with mouse wheel.";
 		}
